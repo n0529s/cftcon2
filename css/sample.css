@@ -1,0 +1,62 @@
+
+
+/* ここからトグルスイッチ */
+
+.toggle {
+  position: relative;
+  width: 98px;
+  height: 38px;
+  margin: 5px 10px;
+  border-radius: 50px;
+  overflow: hidden;
+  cursor: pointer;
+}
+.toggle input[type=checkbox] {
+  display: none;
+}
+.toggle:before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background: #7cd7f3;
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+}
+.toggle:after {
+  content: "OFF";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 32px;
+  height: 32px;
+  display: block;
+  border-radius: 50px;
+  background: #fff;
+  box-shadow: 0 9px 28px -6px rgba(0, 0, 0, 0.3);
+  -webkit-transition: 0.2s ease-out;
+  transition: 0.2s ease-out;
+  text-align: center;
+  padding: 10px 0 0;
+  line-height: 1;
+  font-size: 12px;
+  font-weight: bold;
+  color: #4394df;
+  letter-spacing: .5px;
+  box-sizing: border-box;
+}
+.toggle.checked:before {
+  background: #f8268f;
+}
+.toggle.checked:after {
+  content: "ON";
+  left: 63px;
+  box-shadow: 0 9px 28px -6px rgba(0, 0, 0, 0.5);
+  color: #fc0d0d;
+  padding: 12px 0 0 1px;
+}
+
+/* ここまでトグルスイッチ */
