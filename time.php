@@ -8,19 +8,9 @@ $gen_name = $_SESSION['gen_name'];
 $pill_num = $_SESSION["pill_num"];
 
 
-
-
-
-// var_dump($gen_name);
 require_once('funcs.php');
-//ログインチェック
-// loginCheck();
+
 $pdo = db_conn();
-
-// 現場経歴一覧取得_emp_idで抽出
-// header("Refresh:5");
-// echo date('H:i:s Y-m-d');
-
 
 
 // １．杭番号情報抽出
@@ -56,7 +46,9 @@ $cs_area =array();
 $floor_height =array();
 $labels = "labels: [";
 $gr_data = "data:[";
+$gr_data2 = "data:[";
 $gr_data_plan = "data:[";
+$gr_data_plan2 = "data:[";
 
 if ($status == false) {
     // execute（SQL実行時にエラーがある場合）
@@ -89,22 +81,12 @@ if ($status == false) {
       // ８．１グラフのラベル表示
         $labels .= "'".$result['floor_num']."',";
 
-
-
-
-
       // JS_starttimeの変数定義の記載
         $start_time .= "let startTime".$result['floor_num']."= 0;\n";
 
       // JS_stoptimeの変数定義の記載
         $stop_time .= "let stopTime".$result['floor_num']." = 0;\n";
-
         $timeoutID .= "let timeoutID".$result['floor_num'].";\n";
-
-
-                      
-
-
 
       // 時間を表示する関数
       $time22 .= "function displayTime".$result['floor_num']."() {
@@ -128,66 +110,6 @@ if ($status == false) {
           time".$result['floor_num'].".textContent = '経過時間：' + m".$result['floor_num']." + ':' + s".$result['floor_num'].";
         }
         timeoutID".$result['floor_num']." = setTimeout(displayTime".$result['floor_num'].", 100)};\n";
-
-
-
-
-
-        // const h".$result['floor_num']." = String(currentTime".$result['floor_num'].".getUTCHours()).padStart(2, '0');
-        // const m".$result['floor_num']." = String(currentTime".$result['floor_num'].".getUTCMinutes()).padStart(2, '0');
-        // const s".$result['floor_num']." = String(currentTime".$result['floor_num'].".getUTCSeconds()).padStart(2, '0');
-        // const ms".$result['floor_num']." = String(currentTime".$result['floor_num'].".getUTCMilliseconds()).padStart(3, '0');
-        //  if (time".$result['floor_num'].") {
-        //   time".$result['floor_num'].".textContent = '経過時間：' + m".$result['floor_num']." + ':' + s".$result['floor_num'].";
-        // }
-     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      // $time22 .="function displayTime".$result['floor_num']."() {
-      //             let elapsed; // 経過時間をミリ秒で格納
-      //             if (stopTime".$result['floor_num']." != 0) {
-      //                 // 経過時間を計算する場合
-      //                 elapsed = stopTime".$result['floor_num']." - startTime".$result['floor_num'].";
-      //             } else {
-      //                 // 現在の時間とスタート時間の差を計算する場合
-      //                 elapsed = Date.now() - startTime".$result['floor_num'].";
-      //             }
-
-      //             // ミリ秒を時間、分、秒に変換
-      //             const minutes = Math.floor(elapsed / 60000); // ミリ秒を分に変換
-      //             const seconds = Math.floor((elapsed % 60000) / 1000); // ミリ秒を秒に変換
-      //             const milliseconds = Math.floor((elapsed % 1000) / 10); // ミリ秒を10ms単位で切り捨て
-
-      //             const m".$result['floor_num']." = String(minutes).padStart(2, '0');
-      //             const s".$result['floor_num']." = String(seconds).padStart(2, '0');
-      //             const ms".$result['floor_num']." = String(milliseconds).padStart(2, '0');
-
-      //             if (time".$result['floor_num'].") {
-      //                 time".$result['floor_num'].".textContent = '経過時間：' + m".$result['floor_num']." + ':' + s".$result['floor_num']." + ':' + ms".$result['floor_num'].";
-      //             }
-
-      //             timeoutID".$result['floor_num']." = setTimeout(displayTime".$result['floor_num'].", 10);
-      //     }\n";
-
-  
-  
-
-
-
-
-
 
 
     //  formの定義関数
@@ -223,22 +145,9 @@ if ($status == false) {
                     })
             };";
 
-
-
-
-
-
-
-
-
         // 1flor下の定義
         $n_1 = $result['floor_num'];
 
-
-
-
-  
-       
 
             // 打設数量算出
             $floor_height[] = $result['floor_height'];
@@ -248,11 +157,10 @@ if ($status == false) {
             $stmt222->execute();
                       foreach ($stmt222 as $row222) {
                               $cs_area[] = $row222['cs_area']; 
-
                           }
 
-      $floor_numaa[] = $result['floor_num']; 
-      $floor_end = $result['floor_num'];   
+          $floor_numaa[] = $result['floor_num']; 
+          $floor_end = $result['floor_num'];   
     }
     $planfloor_numaa = count($floor_numaa);
     // var_dump($floor_end);
@@ -269,6 +177,7 @@ if ($status == false) {
               // グラフ計画時間
                $plan11 += $plan111;
                $gr_data_plan .="'".$plan11."',";
+               $gr_data_plan2 .="'1.0',";
         }
       }
 
@@ -292,12 +201,6 @@ if ($status == false) {
                   console.error('エラー:', error);
               })
         };\n";
-
-
-
-
-
-
 
 
                   // ７．サーバ登録情報検索
@@ -329,17 +232,26 @@ if ($status == false) {
 
                   // ８．２グラフ表示値
                   $i = 1;
+                  $j = 0;
                   if(!empty($search_rgtime)){
                     while($i !== $floorNum){ 
                       $rawdata1 = new DateTime($search_rgtime[$i]);
+                      $rawdata2 = new DateTime($search_rgtime[$i-1]);
                       $rawdata0 = new DateTime($search_rgtime[0]);
 
                       $interval = $rawdata1->diff($rawdata0);
+                      $interval2 = $rawdata1->diff($rawdata2);
+
                       $minutes = ($interval->h * 60) + $interval->i + ($interval->s / 60);
-                      $gr_data .= "'".$minutes."',";
+                      $minutes_a = floor($minutes * 10) / 10; //小数点１桁切り捨て
+                      $minutes2 = ($interval2->h * 60) + $interval2->i + ($interval2->s / 60);
+                      $speed = $floor_height[$j]/1000/$minutes2;
+                      $speed_a = floor($speed * 10) / 10; //小数点１桁切り捨て
+                      $gr_data .= "'".$minutes_a."',";
+                      $gr_data2 .= "'".$speed_a."',";
 
-
-                      $i++; 
+                      $i++;
+                      $j++; 
                     }
                   }
 
@@ -425,7 +337,10 @@ if ($status == false) {
   
 $labels .="],";
 $gr_data .="],";
+$gr_data2 .="],";
 $gr_data_plan .="],";
+$gr_data_plan2 .="],";
+
 
 
 
@@ -448,6 +363,7 @@ $gr_data_plan .="],";
 <link rel="stylesheet" href="css/sample.css">
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.5.1/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 <style>div{padding:5px;font-size:16px;}</style>
 <title>打上高さ管理</title>
 </head>
@@ -537,31 +453,143 @@ $gr_data_plan .="],";
         </div>
  
         <!-- 折れ線グラフ -->
-        <div style="width:600px;height:500px;" >
-            <canvas id="chart"></canvas>
+        <div style="width:500px;height:1000px;" >
+            <canvas id="chart1" style="margin:20px;"></canvas>
+        
+        <!-- 棒グラフ -->
+        
+            <canvas id="chart2" style="margin:20px;"></canvas>
           </div>
 
 </div>
 
 <!-- グラフ表示位置変更 -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
 <script>
-      var canvas;
-      var ctx;
 
-      function init() {
-          canvas = document.getElementById("chart");
+
+        var canvas1;
+        var ctx1;
+
+  function init() {
+          canvas1 = document.getElementById("chart1");
           // canvas.style.position = "absolute";
           // canvas.style.right = "10px";
           // canvas.style.top = "260px";
-          ctx = canvas.getContext("2d");
+          ctx1 = canvas1.getContext("2d");
           
           draw();
       }
 
       function draw() {
-          ctx.style = "#000000";
-          ctx.rect( 0, 0, 100, 100 );
-          ctx.stroke();
+          ctx1.style = "#000000";
+          ctx1.rect( 0, 0, 100, 100 );
+          ctx1.stroke();
+      }
+
+      window.onload = function() {
+          init();
+      };
+   
+        // canvasの初期化（init()を削除）
+        // var canvas = document.getElementById("chart1");
+        var ctx1 = document.getElementById("chart1");
+        var myLineChart = new Chart(ctx1, {
+            type: 'line',
+            data: {
+                <?= $labels ?>
+                datasets: [
+                    {
+                        label: '打上り完了時間',
+                        <?= $gr_data ?>
+                        borderColor: "#ea2260",
+                        lineTension: 0,
+                        fill: true,
+                        backgroundColor: 'rgb(255, 0, 0, 0.3)',
+                        datalabels: { 
+                        color: 'rgba(255,0,0,1)',
+                        anchor: 'end', // データラベルの位置（'end' は上端）
+                        align: 'end', // データラベルの位置（'end' は上側）
+                        padding: {
+                            bottom: 0
+                          }
+                        },
+                    },
+
+                    {
+                        label: '打上り計画時間',
+                        <?= $gr_data_plan ?>
+                        borderColor: "#0000FF",
+                        lineTension: 0,
+                        fill: true,
+                        backgroundColor: 'rgb(0, 0, 255, 0.3)',
+                    },
+                ],
+            },
+            plugins: [ChartDataLabels], // pluginとしてchartdatalabelsを追加,optionの前に置く
+            options: {
+                title: {
+                    display: true,
+                    text: '打上り高さ管理'
+                },
+                plugins: {
+                    datalabels: {
+                        display: true,  // データラベルの表示を有効にする
+                        color: 'rgba(0,0,100,1)',
+                        anchor: 'start',
+                        align: 'start',
+                        padding: {
+                            top: 5
+                        }
+                    }
+                },
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        fontColor: '#333',
+                        boxWidth: 20,
+                    }
+                },
+                scales: {
+                    y: { // 配列からオブジェクトに変更
+                        ticks: {
+                          min: 0,
+                          suggestedMax: 60,
+
+                            stepSize: 5,
+                            // callback: function(value) {
+                            //     return value + 'min';
+                            // }
+                        }
+                    }
+
+                },
+            }
+        });
+</script>
+
+<script>
+
+  // 棒グラフ
+      var canvas2;
+      var ctx2;
+
+      function init() {
+          canvas2 = document.getElementById("chart2");
+          // canvas.style.position = "absolute";
+          // canvas.style.right = "10px";
+          // canvas.style.top = "260px";
+          ctx2 = canvas2.getContext("2d");
+          
+          draw();
+      }
+
+      function draw() {
+          ctx2.style = "#000000";
+          ctx2.rect( 0, 0, 100, 100 );
+          ctx2.stroke();
       }
 
       window.onload = function() {
@@ -571,10 +599,10 @@ $gr_data_plan .="],";
 
    // aaaa
 
-        var ctx = document.getElementById("chart");
-        var myLineChart = new Chart(ctx, {
+        var ctx2 = document.getElementById("chart2");
+        var myBarChart = new Chart(ctx2, {
           // グラフの種類：折れ線グラフを指定
-          type: 'line',
+          type: 'bar',
           data: {
             // x軸の各メモリ
             <?= $labels ?>
@@ -582,27 +610,40 @@ $gr_data_plan .="],";
             
             datasets: [
               {
-                label: '打上り完了時間',
-                <?= $gr_data ?>
+                label: '各階打設速度',
+                <?= $gr_data2 ?>
                 borderColor: "#ea2260",
                 lineTension: 0, //<===追加
                 fill: true, 
-                backgroundColor:'rgb(255, 0, 0,0.3)'
+                backgroundColor:'rgb(255, 0, 0,0.6)',
+                datalabels: { 
+                        anchor: "start", // データラベルの位置（'end' は上端）
+                        align: "start", // データラベルの位置（'end' は上側）
+                        offset: -15,
+                        color: 'rgba(100,5,5,1)',
+                        padding: {
+                            bottom: 0,
+                          }
+                        },
                           
               },
                 {
-                label: '打上り計画時間', 
-                <?= $gr_data_plan ?>
+                label: '管理基準値', 
+                type: "line",
+                fill: false,
+                <?= $gr_data_plan2 ?>
                 borderColor: "#0000FF",
                 lineTension: 0, //<===追加
-                fill: true, 
-                backgroundColor:'rgb(0, 0, 255,0.3)'
+                datalabels: { 
+                        display:false,
+                        },
+                // fill: true, 
+                // backgroundColor:'rgb(0, 0, 255,0.3)'
                 
               },
-
-
             ],
           },
+          plugins: [ChartDataLabels], // pluginとしてchartdatalabelsを追加,optionの前に置く
           options: {
             title: {
               display: true,
@@ -611,12 +652,13 @@ $gr_data_plan .="],";
            
             plugins: {
               datalabels: { 
-                color: 'rgba(60,160,60,1)',
-                anchor: 'start', 
-                align: 'start',
-                padding: {
-                  top: 10
-                }
+                display: true,  // データラベルの表示を有効にする
+                // color: 'rgba(0,0,100,1)',
+                // anchor: 'start', 
+                // align: 'start',
+                // padding: {
+                //   top: 10
+                // }
               }
             },
             legend: {
@@ -629,22 +671,24 @@ $gr_data_plan .="],";
                 },
 
             scales: {
-              y: [{
-                        // type: 'time',
-                        // distribution: 'series'
-                        ticks: {// v3.5では 'yAxes' ではなく 'y' を使用します
-                              suggestedMax: 60,
-                              suggestedMin: 0,
-                              stepSize: 5,  // 縦メモリのステップ数
-                              callback: function(value) {
-                                  return value + 'min';  // 各メモリのステップごとの表記
-                              }
-                          }
-              }]
+                    y: {
+                      min: 0, // Y軸の最小値を0に固定
+                      max: 2, // Y軸の最大値を2に固定
+                      ticks: {
+                        stepSize: 0.1, // Y軸のメモリのステップ数を固定
+                        // callback: function(value) {
+                        //   return value + ' min/m'; // 各メモリのステップごとの表記
+                        // }
+                      }
+                    }
+
             },
+
+
           }
         });
-        </script>
+
+</script>
 
 <!-- // トグルスイッチのJQuery -->
 
