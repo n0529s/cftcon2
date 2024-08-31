@@ -227,7 +227,7 @@ if ($status == false) {
 
                   $floorNum = count($search_floornum);
                   $floorNum_1 = $floorNum -1;
-                  // var_dump($floorNum);           
+                  var_dump($floorNum);           
                   // var_dump($search_rgtime);
 
                   // ８．２グラフ表示値
@@ -341,12 +341,70 @@ $gr_data2 .="],";
 $gr_data_plan .="],";
 $gr_data_plan2 .="],";
 
+// ９．一時停止ボタン制御
+$pauseTime = [];
+$ssfloor=$floor_numaa[$floorNum_1];//現在稼働中の階高
+var_dump($ssfloor);
+
+$stmt = $pdo->prepare("SELECT * FROM pause WHERE gen_name = :gen_name AND pill_num = :pill_num AND floor_num = :ssfloor");
+$stmt->bindValue(':gen_name', $gen_name, PDO::PARAM_STR);
+$stmt->bindValue(':pill_num', $pill_num, PDO::PARAM_STR);
+$stmt->bindValue(':ssfloor', $ssfloor, PDO::PARAM_STR);
+
+$status = $stmt->execute();
+if($status==false) {
+  // execute（SQL実行時にエラーがある場合）
+  $error = $stmt->errorInfo();
+  exit("ErrorQuery:".$error4[2]);
+}
+else{
+  while ($result4 = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+  $pauseTime[] = $result4['rgtime'];
+  
+  }
+}
+$stopNum = count($pauseTime);
+var_dump($stopNum);
 
 
+// １０．一時停止検索
+var_dump($search_floornum);
 
+// $i = 1;
+// while ($i !== $floorNum) { 
+  
+//   $ssfloor2 = $search_floornum[$i];
+//       $stmt = $pdo->prepare("SELECT * FROM pause WHERE gen_name = :gen_name AND pill_num = :pill_num AND floor_num = :ssfloor2");
+//       $stmt->bindValue(':gen_name', $gen_name, PDO::PARAM_STR);
+//       $stmt->bindValue(':pill_num', $pill_num, PDO::PARAM_STR);
+//       $stmt->bindValue(':ssfloor2', $ssfloor2, PDO::PARAM_STR);
+  
+//       $status = $stmt->execute();
+//       if($status==false) {
+//         // execute（SQL実行時にエラーがある場合）
+//         $error = $stmt->errorInfo();
+//         exit("ErrorQuery:".$error5[2]);
+//       }
+//       else{
+//         while ($result5 = $stmt->fetch(PDO::FETCH_ASSOC)) {
+//         // $PT='PT_';
+//         // $pauseTime22=$PT.$serch_floornum[$i];
+//         $pauseTime22 .= $result5['rgtime'];
 
+//       $i++;
 
+// }
+//       }
+//     }
+for ($i=1; $i <=30; $i++) {
+  $tmp = 'day' . $i;
+  $$tmp = sprintf('%02d', $i);
+  // デバッグ用の表示
+  printf('%s is %s<br>', $tmp, $$tmp);
+  }
 
+var_dump($PT_1F);
 
 
 ?>
@@ -428,23 +486,18 @@ $gr_data_plan2 .="],";
         </form>
 
         <div style="margin:5px;hight:80px; display: flex; align-items:center;">
-        <input style="margin:5px;hight:80px;align-items:center;font-size:20px;" id="resetButton" type="button" onclick="disabled = true" value="リセット" />
+        <input style="margin:5px;hight:80px;align-items:center;font-size:20px;" id="resetButton" type="button" value="リセット" />
         </div>
 
 
 
-        
-        <form name="form1" action="time_act.php" method="post" style="font-size:14px;width:800px;">
         <div style="display: flex; justify-content:flex-start;margin:5px;">
             <p style="font-size:20px;margin:10px;width:150px;">一時停止：</p>
-            <input type="hidden" name="gen_name" value="<?= $gen_name ?>"/>
-            <input type="hidden" name="pill_num" value="<?= $pill_num ?>"/> 
-            <input type="hidden" name="floor_num" value="一時停止"/>
             <div class="toggle">
-              <input type="checkbox" value="一時　停止" name="check"/>
-            </div>
+                <input type="checkbox" value="一時　停止" name="check"/>
+              </div>
         </div>
-        </form>
+
   </div>
 
 <div style="display: flex; justify-content:flex-start;margin:0px;width:1000px;">
@@ -466,7 +519,7 @@ $gr_data_plan2 .="],";
 <!-- グラフ表示位置変更 -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@3.0.0/dist/chart.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0 "></script>
-<script>
+<script>//グラフ１
 
 
         var canvas1;
@@ -570,7 +623,7 @@ $gr_data_plan2 .="],";
         });
 </script>
 
-<script>
+<script>//グラフ２
 
   // 棒グラフ
       var canvas2;
@@ -690,18 +743,68 @@ $gr_data_plan2 .="],";
 
 </script>
 
-<!-- // トグルスイッチのJQuery -->
+
 
 <script>
+ // トグルスイッチのJQuery
+ let stopNum = <?= $stopNum ?>; // 判定したい変数
+
+        // ページ読み込み時にトグルスイッチの状態を設定
+        document.addEventListener('DOMContentLoaded', function() {
+            if (stopNum % 2 === 0) {
+                // stopNumが偶数ならトグルスイッチをONに
+                document.querySelector('.toggle input').checked = true;
+                document.querySelector('.toggle').classList.add('checked');
+            } else {
+                // stopNumが奇数ならトグルスイッチをOFFに
+                document.querySelector('.toggle input').checked = false;
+                document.querySelector('.toggle').classList.remove('checked');
+            }
+        });
+
+//  $(document).ready(function() {
+  // 初期状態でstopNumが偶数の場合、トグルスイッチをONにする
+  // if (stopNum % 2 == 0) {
+  //   $(".toggle input").prop("checked", false);
+  // } else {
+  //   $(".toggle input").prop("checked", true);
+  // }
+// })
+
 
   $(".toggle").on("click", function() {
-  $(".toggle").toggleClass("checked");
-  if(!$('input[name="check"]').prop("checked")) {
-    $(".toggle input").prop("checked", true);
-  } else {
-    $(".toggle input").prop("checked", false);
-  }
+  // $(".toggle").toggleClass("checked");
+  // if(!$('input[name="check"]').prop("checked")) {
+  //   $(".toggle input").prop("checked", true);
+  // } else {
+  //   $(".toggle input").prop("checked", false);
+  // }
+//   if (stopNum % 2 === 0) {
+//   $(".toggle input").prop("checked", true);;
+// } else {
+//   $(".toggle input").prop("checked", false);
+// }
+
+
+
+  const check = '<?= $ssfloor ?>';
+   // GETリクエストを送信するURLを定義
+   let url = "http://localhost:8080/cftcon/timepause_act.php?id=" + check;
+    console.log(url);
+
+    // Fetch APIを使ってGETリクエストを送信
+    fetch(url)
+      .then(data => {
+        console.log('フォーム送信成功:', data); // デバッグ用のログ
+        // フォーム送信完了後にリロード
+        location.reload(); // ページをリロードする
+      })
+      .catch(error => {
+        console.error('リクエストに問題が発生しました:', error);
+      });
+
 });
+
 
 
 // ストップウオッチのJS
